@@ -19,7 +19,7 @@ export class AsyncEventCalendarComponent implements OnInit {
   activeDayIsOpen = false;
   events$: Observable<Array<CalendarEvent<{ schedule: EventSchedule }>>>;
   constructor(private http: HttpClient) { }
-
+  events: CalendarEvent[];
   ngOnInit() {
     this.fetchEvents();
   }
@@ -37,34 +37,28 @@ export class AsyncEventCalendarComponent implements OnInit {
       day: endOfDay
     }[this.view];
 
-    console.log(format(getStart(this.viewDate), 'yyyy-MM-dd'));
-    console.log(format(getEnd(this.viewDate), 'yyyy-MM-dd'));
+    // console.log(format(getStart(this.viewDate), 'yyyy-MM-dd'));
+    // console.log(format(getEnd(this.viewDate), 'yyyy-MM-dd'));
 
-    this.http.post(`https://localhost:44371/api/Vaccination/getVaccineSchedule`, {
+    this.events$ = this.http.post(`https://localhost:44371/api/Vaccination/getVaccineSchedule`, {
       fromDate: format(getStart(this.viewDate), 'yyyy-MM-dd'),
       toDate: format(getEnd(this.viewDate), 'yyyy-MM-dd')
-    }).toPromise().then((response: any) => {
-      if (response.isSuccess) {
-        console.log(response.data);
-        this.events$ = response.data.map((evt: EventSchedule)  => {
-          console.log(evt);
-          return {
-            title: evt.name,
-            start: new Date(
-              evt.eventDate //+ this.getTimezoneOffsetString(this.viewDate)
-            ),
-            color: colors.red,
-            allDay: true,
-            meta: {
-              evt
-            }
-          };
-        });
-      }
-      console.log(response);
-    }, (err) => {
-      console.log(err);
-    });
+    }).pipe(map((response: any) => response = response.data)).pipe(map((results: EventSchedule[]) => {
+     return  results.map((schedule: EventSchedule)  => {
+        console.log(schedule);
+        return {
+          title: schedule.name,
+          start: new Date(
+            schedule.eventDate  + this.getTimezoneOffsetString(this.viewDate)
+          ),
+          color: colors.red,
+          allDay: true,
+          meta: {
+            schedule
+          }
+        };
+      });
+    }));
   }
 
   dayClicked(s) {

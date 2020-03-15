@@ -11,6 +11,8 @@ import { CalenderBasicComponent } from './calender-basic/calender-basic.componen
 import { BlankCalenderComponent } from './blank-calender/blank-calender.component';
 import { RecurringEventCalenderComponent } from './recurring-event-calender/recurring-event-calender.component';
 import { AsyncEventCalendarComponent } from './async-event-calendar/async-event-calendar.component';
+import { AsyncCalenderExampleComponent } from './async-calender-example/async-calender-example.component';
+import { CalendarHeaderComponent } from './shared/calender-header-components';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { AsyncEventCalendarComponent } from './async-event-calendar/async-event-
     CalenderBasicComponent,
     BlankCalenderComponent,
     RecurringEventCalenderComponent,
-    AsyncEventCalendarComponent
+    AsyncEventCalendarComponent,
+    AsyncCalenderExampleComponent,
+    CalendarHeaderComponent
   ],
   imports: [
     FormsModule,
@@ -28,6 +32,7 @@ import { AsyncEventCalendarComponent } from './async-event-calendar/async-event-
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   providers: [],
+  exports: [CalendarHeaderComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
